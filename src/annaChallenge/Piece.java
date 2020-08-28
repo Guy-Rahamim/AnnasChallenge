@@ -8,7 +8,7 @@ public class Piece
 		int right;
 		int bottom;
 		boolean positionedCorrectly=false;
-		boolean orientedCorrectly=false;
+	//	boolean orientedCorrectly=false;
 		
 		public Piece(String str)
 		{

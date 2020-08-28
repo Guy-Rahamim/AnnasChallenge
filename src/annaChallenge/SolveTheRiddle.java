@@ -1,16 +1,29 @@
 package annaChallenge;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SolveTheRiddle
 	{
+		//************************** CLASS FIELDS ***************************//
+		
+		//initializing a scanner and a string for storing the end result.
+		public static Scanner input = new Scanner(System.in);
 		public static String result = "";
+		
+		//initializing array lists for the initial board, 
+		//the finished board and the the edge locations.
+		public static ArrayList<ArrayList<Piece>> initialBoard = new ArrayList<ArrayList<Piece>>();
 		public static ArrayList<ArrayList<Piece>> board = new ArrayList<ArrayList<Piece>>();
-		public static Location[] cornerLocations = new Location[4];
 		public static ArrayList<Location> edgeLocations = new ArrayList<Location>();
-		public static String[] splitInput;
-
-		public static void initSplitInput()
+		
+		//initializing arrays for corner locations and input string array
+		public static Location[] cornerLocations = new Location[4];
+		public static String[] formattedInitialInput;
+		
+		//************************** CLASS FIELDS ***************************//
+	
+	public static void formatInput()
 			{
 				String str = "0,[5, 14, 9, 7]; 1,[15, 14, 2, 13]; 2,[7, 16, 5, 0]; 3,[14, 5, 0, 6];"
 						+ "4,[10, 18, 9, 12]; 5,[16, 9, 7, 20]; 6,[9, 18, 18, 14]; 7,[0, 14, 7, 19];"
@@ -39,15 +52,9 @@ public class SolveTheRiddle
 						+ "12]; 96,[7, 0, 11, 14]; 97,[13, 10, 0, 19]; 98,[19, 17, 5, 5]; 99,[20, 7,\r\n" + "12, 2]";
 
 				str = str.replaceAll("\\r\\n", "");
-				splitInput = str.split(";", 100);
+				formattedInitialInput = str.split(";", 100);
 			}
-	
-		public static void initFrameLocations()
-		{
-			initCornerLocations();
-			initEdgeLocations();
-		}
-		
+
 		public static void initCornerLocations()
 			{
 				//
@@ -90,32 +97,30 @@ public class SolveTheRiddle
 						board.add(new ArrayList<Piece>());
 						for (int j = 0; j < 10; j++)
 							{
-
-								board.get(i).add(new Piece(splitInput[splitIndex]));
-								// initialBoard[i][j]= new Piece(splitInput[splitIndex]);
+								board.get(i).add(new Piece(formattedInitialInput[splitIndex]));
 								splitIndex++;
 							}
 					}
+				fillInitialBoard();
 			}
 
-		public static int countOccurences(String str, char character)
-			{
-				int counter = 0;
-
-				for (int i = 0; i < str.length(); i++)
-					{
-						if (str.charAt(i) == character)
-							counter++;
-					}
-
-				return counter;
-			}
+		public static void fillInitialBoard()
+		{
+			for (int i=0; i<board.size(); i++)
+				{
+					initialBoard.add(new ArrayList<Piece>());
+					for (int j=0; j<board.get(i).size(); j++)
+						{
+							initialBoard.get(i).add(board.get(i).get(j));
+						}
+				}
+		}
 
 		public static void printBoard()
 			{
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < board.size(); i++)
 					{
-						for (int j = 0; j < 10; j++)
+						for (int j = 0; j <board.get(i).size(); j++)
 							{
 								board.get(i).get(j).drawLine1();
 								// initialBoard[i][j].drawLine1();
@@ -123,7 +128,7 @@ public class SolveTheRiddle
 							}
 						System.out.println();
 
-						for (int j = 0; j < 10; j++)
+						for (int j = 0; j < board.get(i).size(); j++)
 							{
 								board.get(i).get(j).drawLine2();
 								// initialBoard[i][j].drawLine2();
@@ -131,7 +136,7 @@ public class SolveTheRiddle
 							}
 						System.out.println();
 
-						for (int j = 0; j < 10; j++)
+						for (int j = 0; j < board.get(i).size(); j++)
 							{
 								board.get(i).get(j).drawLine3();
 								// initialBoard[i][j].drawLine3();
@@ -139,7 +144,7 @@ public class SolveTheRiddle
 							}
 						System.out.println();
 
-						for (int j = 0; j < 10; j++)
+						for (int j = 0; j < board.get(i).size(); j++)
 							{
 								board.get(i).get(j).drawLine4();
 								// initialBoard[i][j].drawLine4();
@@ -153,7 +158,44 @@ public class SolveTheRiddle
 					}
 			}
 
-		public static void placeCornerPieces()
+		public static void printInitialBoard()
+			{
+				for (int i = 0; i < initialBoard.size(); i++)
+					{
+						for (int j = 0; j <initialBoard.get(i).size(); j++)
+							{
+								initialBoard.get(i).get(j).drawLine1();
+								System.out.print("\t");
+							}
+						System.out.println();
+
+						for (int j = 0; j < initialBoard.get(i).size(); j++)
+							{
+								initialBoard.get(i).get(j).drawLine2();
+								System.out.print("\t");
+							}
+						System.out.println();
+
+						for (int j = 0; j < initialBoard.get(i).size(); j++)
+							{
+								initialBoard.get(i).get(j).drawLine3();
+								System.out.print("\t");
+							}
+						System.out.println();
+
+						for (int j = 0; j < initialBoard.get(i).size(); j++)
+							{
+								initialBoard.get(i).get(j).drawLine4();
+								System.out.print("\t");
+							}
+						System.out.println();
+						System.out.println("==============================================================================================================================================================");
+						System.out.println();
+
+					}
+			}
+		
+		public static void positionCornerPieces()
 			{
 				int currentCorner = 0;
 				for (int i = 0; i < board.size(); i++)
@@ -182,9 +224,9 @@ public class SolveTheRiddle
 					}
 			}
 
-		public static void placeEdgePieces()
+		public static void positionEdgePieces()
 			{
-				scanForCorrectEdges();
+				flagPreplacedEdges();
 				int edgeCounter = 0;
 
 				for (int i = 0; i < board.size(); i++)
@@ -198,8 +240,7 @@ public class SolveTheRiddle
 												int edgeI = edgeLocations.get(edgeCounter).i;
 												int edgeJ = edgeLocations.get(edgeCounter).j;
 
-
-												//switch 2 edge pieces using a temp.
+												// switch 2 edge pieces using a temp.
 												Piece temp = new Piece(board.get(i).get(j));
 												board.get(i).set(j, new Piece(board.get(edgeI).get(edgeJ)));
 												board.get(edgeI).set(edgeJ, new Piece(temp));
@@ -215,7 +256,7 @@ public class SolveTheRiddle
 
 			}
 
-		public static void rotateFramePieces()
+		public static void rotatePiecesOnFrame()
 			{
 				for (int i = 0; i < board.size(); i++)
 					{
@@ -229,40 +270,37 @@ public class SolveTheRiddle
 									{
 										// if corner is top left
 										if (i == 0 && j == 0)
-												while (board.get(i).get(j).left != 0 || board.get(i).get(j).top != 0)
-													{
-														board.get(i).get(j).rotateClockwise();
-														numberOfRotations++;
-													}
-											
+											while (board.get(i).get(j).left != 0 || board.get(i).get(j).top != 0)
+												{
+													board.get(i).get(j).rotateClockwise();
+													numberOfRotations++;
+												}
 
 										// if corner is bottom left
-										else if (i == board.size()-1 && j==0)
-												while (board.get(i).get(j).left != 0 || board.get(i).get(j).bottom != 0)
-													{
-														board.get(i).get(j).rotateClockwise();
-														numberOfRotations++;
-													}
-											
+										else if (i == board.size() - 1 && j == 0)
+											while (board.get(i).get(j).left != 0 || board.get(i).get(j).bottom != 0)
+												{
+													board.get(i).get(j).rotateClockwise();
+													numberOfRotations++;
+												}
 
 										// if corner is top right
-										else if (i == 0 && j== board.get(i).size()-1)
-												while (board.get(i).get(j).right != 0 || board.get(i).get(j).top != 0)
-													{
-														board.get(i).get(j).rotateClockwise();
-														numberOfRotations++;
-													}
-											
+										else if (i == 0 && j == board.get(i).size() - 1)
+											while (board.get(i).get(j).right != 0 || board.get(i).get(j).top != 0)
+												{
+													board.get(i).get(j).rotateClockwise();
+													numberOfRotations++;
+												}
 
 										// if corner is bottom right
-										else if (i == board.size()-1 && j == board.get(i).size()-1)
-												while (board.get(i).get(j).bottom != 0 || board.get(i).get(j).right != 0)
-													{
-														board.get(i).get(j).rotateClockwise();
-														numberOfRotations++;
-													}
-								}
-							// ******************************* /ROTATING CORNERS************************//
+										else if (i == board.size() - 1 && j == board.get(i).size() - 1)
+											while (board.get(i).get(j).bottom != 0 || board.get(i).get(j).right != 0)
+												{
+													board.get(i).get(j).rotateClockwise();
+													numberOfRotations++;
+												}
+									}
+								// ******************************* /ROTATING CORNERS************************//
 
 								// ******************************* ROTATING EDGES ***********************//
 								if (board.get(i).get(j).pieceType().equals("edge"))
@@ -291,7 +329,7 @@ public class SolveTheRiddle
 												}
 
 										// if edge is in the bottom
-										if (i == board.size()-1)
+										if (i == board.size() - 1)
 											while (board.get(i).get(j).bottom != 0)
 												{
 													board.get(i).get(j).rotateClockwise();
@@ -300,28 +338,15 @@ public class SolveTheRiddle
 									}
 								// ******************************* /ROTATING EDGES ***********************//
 								updateResult(board.get(i).get(j).id, numberOfRotations);
-							}// end j loop
-						result+="\n";
-					} //end i loop
+							} // end j loop
+						result += "\n";
+					} // end i loop
 
 			} // end function
 
-		public static void countEdgePieces()
+		public static void flagPreplacedEdges()
 			{
-				for (int i = 0; i < board.size(); i++)
-					{
-						for (int j = 0; j < board.size(); j++)
-							{
-								if (board.get(i).get(j).pieceType().contentEquals("edge"))
-									System.out.println("edge piece at: " + "( " + i + " , " + j + " )"
-											+ ", positioned correctly: " + board.get(i).get(j).positionedCorrectly);
-							}
-					}
-			}
-
-		public static void scanForCorrectEdges()
-			{
-				int correctlyPositioned = 0;
+				//int correctlyPositioned = 0;
 				for (int i = 0; i < board.size(); i++)
 					{
 						for (int j = 0; j < board.size(); j++)
@@ -336,7 +361,7 @@ public class SolveTheRiddle
 													{
 														board.get(i).get(j).positionedCorrectly = true;
 														edgeLocations.remove(k);
-														correctlyPositioned++;
+														//correctlyPositioned++;
 													}
 											}
 									}
@@ -344,6 +369,75 @@ public class SolveTheRiddle
 					}
 			}
 
+		public static void updateResult(int id, int numberOfRotations)
+			{
+				result += " " + id + "," + numberOfRotations + "; ";
+
+			}
+
+		public static void boardSetup()
+			{
+				formatInput();
+				fillBoard();
+				initEdgeLocations();
+				initCornerLocations();
+			}
+
+		public static void toggleAnswerDisplay()
+			{
+				System.out.println("Please choose one of the following options");
+
+				int choice;
+
+				do
+					{
+						System.out.println("1 - Display original board.");
+						System.out.println("2 - Display the board.");
+						System.out.println("3 - Display formatted answer.");
+						System.out.println("4 - Exit");
+						choice = input.nextInt();
+						
+						switch (choice)
+							{
+								
+							case 1:
+								printInitialBoard();
+								break;
+
+							case 2:
+								printBoard();
+								break;
+
+							case 3:
+								System.out.println(result);
+								break;
+								
+							case 4:
+								System.out.println("Thank you for participating!");
+								break;
+
+							default:
+								System.out.println("Not a valid choice.");
+							}
+					}
+				
+				while(choice!=4);
+			}
+
+		//************************** DEBUG FUNCTIONS ***************************//
+		
+		public static int countOccurences(String str, char character)
+			{
+				int counter = 0;
+
+				for (int i = 0; i < str.length(); i++)
+					{
+						if (str.charAt(i) == character)
+							counter++;
+					}
+
+				return counter;
+			}
 		public static void countCornerPieces()
 			{
 				for (int i = 0; i < board.size(); i++)
@@ -356,25 +450,38 @@ public class SolveTheRiddle
 							}
 					}
 			}
-
-		public static void updateResult(int id, int numberOfRotations)
+		public static void countEdgePieces()
 			{
-				result +=" "+ id + "," + numberOfRotations + "; ";
-				
+				for (int i = 0; i < board.size(); i++)
+					{
+						for (int j = 0; j < board.size(); j++)
+							{
+								if (board.get(i).get(j).pieceType().contentEquals("edge"))
+									System.out.println("edge piece at: " + "( " + i + " , " + j + " )"
+											+ ", positioned correctly: " + board.get(i).get(j).positionedCorrectly);
+							}
+					}
 			}
-
+	
+		//************************** DEBUG FUNCTIONS ***************************//
+		
+		
+		//************************** MAIN FUNCTION ***************************//
 		public static void main(String[] args)
 			{
+				// setting up the board.
+				boardSetup();
 
-				initSplitInput();
-				fillBoard();
-				initFrameLocations();
-				placeCornerPieces();
-				placeEdgePieces();
-				rotateFramePieces();
+				// positioning corner and edge pieces on the outside frame.
+				positionCornerPieces();
+				positionEdgePieces();
 
-				printBoard();
-				
-				System.out.println("\n\n\n" + result);
+				// rotating the pieces on the frame so the 0's face the outside.
+				rotatePiecesOnFrame();
+
+				// asking the user for a preferred format for the answer.
+				toggleAnswerDisplay();
 			}
+		//************************** MAIN FUNCTION ***************************//
+
 	}
